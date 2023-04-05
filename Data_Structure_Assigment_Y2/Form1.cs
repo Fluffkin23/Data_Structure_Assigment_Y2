@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -192,5 +193,450 @@ namespace Data_Structure_Assigment_Y2
 
             return myHash; // Return myHash
         }
+
+        private MyLinkedList<Book> CreateBooksLinked(MyLinkedList<Book> bookList) // Declare private method to create books linked list
+        {
+            if (checkBox1.Checked) // Check if checkBox1 is checked
+            {
+                bookList = getHalfList(); // Call getHalfList method
+            }
+            else
+            {
+                bookList = getBooksList(); // Call getBooksList method
+            }
+
+            MyLinkedList<Book> myLinked = new MyLinkedList<Book>(); // Declare myLinked variable of MyLinkedList<Book> type
+            if (bookList == null) // Check if bookList is null
+            {
+                MessageBox.Show("Please import a JSON first"); // Show message box
+            }
+            else
+            {
+                foreach (Book book in bookList) // Iterate through bookList
+                {
+                    myLinked.AddFirst(book); // Add book to myLinked
+                }
+            }
+
+            return myLinked; // Return myLinked
+        }
+
+        private void button1_Click(object sender, EventArgs e) // Declare private method for button1 click event
+        {
+            MyLinkedList<Book> testList = new MyLinkedList<Book>(); // Declare testList variable of MyLinkedList<Book> type
+
+            if (checkBox1.Checked)  // Check if checkBox1 is checked
+            {
+                testList = getHalfList(); // Call getHalfList method
+            }
+            else
+            {
+                testList = getBooksList(); // Call getBooksList method
+
+            }
+
+            MyDictionary<string, Book> booksDict = CreateBooksDictionary(testList); // Declare booksDict variable of MyDictionary<string, Book> type and assign it to CreateBooksDictionary method
+
+            richTextBox1.Clear(); // Clear richTextBox1
+
+            if (testList == null)  // Check if testList is null
+            {
+                MessageBox.Show("Please import a JSON First"); // Show message box
+            }
+
+            if (comboBox1.SelectedItem != null) // Check if comboBox1 selected item is not null
+            {
+                this.selectedSortBy = (SortBy)comboBox1.SelectedItem; // Assign selected item to selectedSortBy variable
+
+
+                if (DictionaryRadio.Checked) // Check if DictionaryRadio is checked
+                {
+
+                    if (BubbleRadio.Checked) // Check if BubbleRadio is checked
+                    {
+                        if (comboBox1.SelectedItem == null) // Check if comboBox1 selected item is null
+                        {
+                            richTextBox1.AppendText("Please add sort by"); // Append text to richTextBox1
+                        }
+                        else
+                        {
+                            this.selectedSortBy = (SortBy)comboBox1.SelectedItem; // Assign selected item to selectedSortBy variable
+
+                        }
+
+                        Stopwatch stopwatch = new Stopwatch(); // Declare stopwatch variable of Stopwatch type
+                        stopwatch.Start(); // Start stopwatch
+                        booksDict.BubbleSort(this.selectedSortBy); // Call BubbleSort method
+
+                        stopwatch.Stop(); // Stop stopwatch
+                        long elapsedTicks = stopwatch.ElapsedTicks; // Declare elapsedTicks variable of long type and assign it to stopwatch elapsed ticks
+                        double ticksPerNanosecond = Stopwatch.Frequency / 1_000_000_000.0; // Declare ticksPerNanosecond variable of double type and assign it to stopwatch frequency divided by 1_000_000_000.0
+                        double elapsedNanoseconds = elapsedTicks / ticksPerNanosecond; // Declare elapsedNanoseconds variable of double type and assign it to elapsedTicks divided by ticksPerNanosecond
+
+
+                        richTextBox1.AppendText("------------------------Interface BubbleSort MyDictionary---------------\n"); // Append text to richTextBox1
+                        richTextBox1.AppendText("The time is" + elapsedNanoseconds + "nano Seconds" + "\n"); // Append text to richTextBox1
+                        foreach (string title in booksDict.Keys) // Iterate through booksDict keys
+                        {
+                            Book book = booksDict[title]; // Declare book variable of Book type and assign it to booksDict title
+                            richTextBox1.AppendText($"- {book.Year} by {book.Title}\n"); // Append text to richTextBox1
+                        }
+                    }
+                    else if (InsertionRadio.Checked) // Check if InsertionRadio is checked
+                    {
+                        Stopwatch stopwatch = new Stopwatch(); // Declare stopwatch variable of Stopwatch type
+                        stopwatch.Start(); // Start stopwatch
+                        if (comboBox1.SelectedItem == null) // Check if comboBox1 selected item is null
+                        {
+                            MessageBox.Show("Please sortBy"); // Show message box
+                        }
+                        booksDict.InsertionSort(selectedSortBy); // Call InsertionSort method
+
+                        stopwatch.Stop(); // Stop stopwatch
+
+                        // double elapsedTime = Math.Round(stopwatch.Elapsed.TotalSeconds, 1);
+                        long elapsedTicks = stopwatch.ElapsedTicks; // Declare elapsedTicks variable of long type and assign it to stopwatch elapsed ticks
+                        double ticksPerNanosecond = Stopwatch.Frequency / 1_000_000_000.0; // Declare ticksPerNanosecond variable of double type and assign it to stopwatch frequency divided by 1_000_000_000.0
+                        double elapsedNanoseconds = elapsedTicks / ticksPerNanosecond; // Declare elapsedNanoseconds variable of double type and assign it to elapsedTicks divided by ticksPerNanosecond
+
+                        richTextBox1.Clear(); // Clear richTextBox1
+                        richTextBox1.AppendText("------------------------Interface Insertion Sort MyDictionary---------------\n"); // Append text to richTextBox1
+                        richTextBox1.AppendText("The time is" + elapsedNanoseconds + "\n"); // Append text to richTextBox1
+                        foreach (string title in booksDict.Keys) // Iterate through booksDict keys
+                        {
+                            Book book = booksDict[title]; // Declare book variable of Book type and assign it to booksDict title
+                            richTextBox1.AppendText($"- {book.Year} by {book.Title}\n"); // Append text to richTextBox1
+                        }
+                    }
+                    else if (LinearButton.Checked) // Check if LinearButton is checked
+                    {
+                        richTextBox1.AppendText("------------------------Interface Dictionary LinearSearch---------------\n"); // Append text to richTextBox1
+                        if (String.IsNullOrEmpty(textBox1.Text)) // Check if textBox1 text is null or empty
+                        {
+                            MessageBox.Show("Please search for something!"); // Show message box
+                        }
+                        Stopwatch stopwatch = new Stopwatch(); // Declare stopwatch variable of Stopwatch type
+                        stopwatch.Start(); // Start stopwatch
+
+                        IEnumerable<Book> results = booksDict.LinearSearch(selectedSortBy, textBox1.Text); // Declare results variable of IEnumerable<Book> type and assign it to booksDict LinearSearch method
+                        stopwatch.Stop(); // Stop stopwatch
+
+                        //double elapsedTime = Math.Round(stopwatch.Elapsed.TotalSeconds, 1);
+                        long elapsedTicks = stopwatch.ElapsedTicks; // Declare elapsedTicks variable of long type and assign it to stopwatch elapsed ticks
+                        double ticksPerNanosecond = Stopwatch.Frequency / 1_000_000_000.0; // Declare ticksPerNanosecond variable of double type and assign it to stopwatch frequency divided by 1_000_000_000.0
+                        double elapsedNanoseconds = elapsedTicks / ticksPerNanosecond; // Declare elapsedNanoseconds variable of double type and assign it to elapsedTicks divided by ticksPerNanosecond
+                        richTextBox1.AppendText("The time is" + elapsedNanoseconds + "\n"); // Append text to richTextBox1
+
+
+                        if (results.Any()) // Check if results has any
+                        {
+                            foreach (Book book in results) // Iterate through results
+                            {
+                                richTextBox1.AppendText(book.Title + " by " + book.Author + book.Publisher + book.Genre + book.Year + "\n"); // Append text to richTextBox1
+                            }
+                        }
+                        else
+                        {
+                            richTextBox1.AppendText("Could not find:\n"); // Append text to richTextBox1
+
+                        }
+                    }
+                    else if (BinaryButton.Checked) // Check if BinaryButton is checked
+                    {
+                        if (String.IsNullOrEmpty(textBox1.Text)) // Check if textBox1 text is null or empty
+                        {
+                            MessageBox.Show("Please search for something!"); // Show message box
+                        }
+                        richTextBox1.AppendText("------------------------Interface Dictionary BinarySearch---------------\n"); // Append text to richTextBox1
+
+                        Stopwatch stopwatch = new Stopwatch(); // Declare stopwatch variable of Stopwatch type
+                        stopwatch.Start(); // Start stopwatch
+
+                        IEnumerable<Book> foundBookBinary = booksDict.BinarySearch(selectedSortBy, textBox1.Text); // Declare foundBookBinary variable of IEnumerable<Book> type and assign it to booksDict BinarySearch method
+
+                        stopwatch.Stop();   // Stop stopwatch
+
+                        //double elapsedTime = Math.Round(stopwatch.Elapsed.TotalSeconds, 1);
+                        long elapsedTicks = stopwatch.ElapsedTicks; // Declare elapsedTicks variable of long type and assign it to stopwatch elapsed ticks
+                        double ticksPerNanosecond = Stopwatch.Frequency / 1_000_000_000.0; // Declare ticksPerNanosecond variable of double type and assign it to stopwatch frequency divided by 1_000_000_000.0
+                        double elapsedNanoseconds = elapsedTicks / ticksPerNanosecond; // Declare elapsedNanoseconds variable of double type and assign it to elapsedTicks divided by ticksPerNanosecond
+                        richTextBox1.AppendText("The time is" + elapsedNanoseconds + "\n"); // Append text to richTextBox1
+
+                        if (foundBookBinary != null) // Check if foundBookBinary is not null
+                        {
+                            foreach (Book book in foundBookBinary) // Iterate through foundBookBianry
+                            {
+                                richTextBox1.AppendText(book.Title + " by " + book.Author + book.Publisher + book.Genre + book.Year + "\n"); // Append text to richTextBox1
+                            }
+                        }
+                        else
+                        {
+                            richTextBox1.AppendText("Could not find:\n"); // Append text to richTextBox1
+                        }
+                    }
+
+                }
+                else if (HashSetRadio.Checked) // Check if HashSetRadio is checked
+                {
+                    MyLinkedList<Book> hashList = new MyLinkedList<Book>(); // Declare hashList variable of MyLinkedList<Book> type and assign it to new MyLinkedList<Book>
+
+                    if (checkBox1.Checked) // Check if checkBox1 is checked
+                    {
+                        hashList = getHalfList(); // Assign hashList to getHalfList method
+                    }
+                    else
+                    {
+                        hashList = getBooksList(); // Assign hashList to getBooksList method
+                    }
+
+                    MyHashSet<Book> myHash = CreateBooksHashSet(getBooksList()); // Declare myHash variable of MyHashSet<Book> type and assign it to CreateBooksHashSet method
+                    if (BubbleRadio.Checked) // Check if BubbleRadio is checked
+                    {
+                        Stopwatch stopwatch = new Stopwatch(); // Declare stopwatch variable of Stopwatch type
+                        stopwatch.Start(); // Start stopwatch
+
+                        myHash.BubbleSort(selectedSortBy); // Call myHash BubbleSort method
+
+                        stopwatch.Stop(); // Stop stopwatch
+
+                        // double elapsedTime = Math.Round(stopwatch.Elapsed.TotalSeconds, 1);
+                        long elapsedTicks = stopwatch.ElapsedTicks; // Declare elapsedTicks variable of long type and assign it to stopwatch elapsed ticks
+                        double ticksPerNanosecond = Stopwatch.Frequency / 1_000_000_000.0; // Declare ticksPerNanosecond variable of double type and assign it to stopwatch frequency divided by 1_000_000_000.0
+                        double elapsedNanoseconds = elapsedTicks / ticksPerNanosecond; // Declare elapsedNanoseconds variable of double type and assign it to elapsedTicks divided by ticksPerNanosecond
+
+                        richTextBox1.AppendText("------------------------Interface BubbleSort MyHashSet---------------\n"); // Append text to richTextBox1
+                        richTextBox1.AppendText("The time is" + elapsedNanoseconds + "\n"); // Append text to richTextBox1
+
+                        foreach (Book book in myHash) // Iterate through myHash
+                        {
+
+                            richTextBox1.AppendText($"- {book.Title} by {book.Author} + {book.Publisher} + {book.Genre} + {book.Year}\n"); // Append text to richTextBox1
+                        }
+                    }
+                    else if (InsertionRadio.Checked) // Check if InsertionRadio is checked
+                    {
+                        Stopwatch stopwatch = new Stopwatch(); // Declare stopwatch variable of Stopwatch type
+                        stopwatch.Start(); // Start stopwatch
+
+                        myHash.InsertionSort(selectedSortBy); // Call myHash InsertionSort method
+
+                        stopwatch.Stop(); // Stop stopwatch
+
+                        //double elapsedTime = Math.Round(stopwatch.Elapsed.TotalSeconds, 1);
+                        long elapsedTicks = stopwatch.ElapsedTicks; // Declare elapsedTicks variable of long type and assign it to stopwatch elapsed ticks
+                        double ticksPerNanosecond = Stopwatch.Frequency / 1_000_000_000.0;  // Declare ticksPerNanosecond variable of double type and assign it to stopwatch frequency divided by 1_000_000_000.0
+                        double elapsedNanoseconds = elapsedTicks / ticksPerNanosecond; // Declare elapsedNanoseconds variable of double type and assign it to elapsedTicks divided by ticksPerNanosecond
+
+                        richTextBox1.Clear(); // Clear richTextBox1
+                        richTextBox1.AppendText("------------------------Interface BubbleSort MyHashSet---------------\n"); // Append text to richTextBox1
+                        richTextBox1.AppendText("The time is" + elapsedNanoseconds + "\n"); // Append text to richTextBox1
+
+                        foreach (Book book in myHash) // Iterate through myHash
+                        {
+
+                            richTextBox1.AppendText($"- {book.Title} by {book.Author} + {book.Publisher} + {book.Genre} + {book.Year}\n"); // Append text to richTextBox1
+                        }
+                    }
+                    else if (LinearButton.Checked) // Check if LinearButton is checked
+                    {
+                        if (String.IsNullOrEmpty(textBox1.Text)) // Check if textBox1 is null or empty
+                        {
+                            MessageBox.Show("Please search for something!"); // Show message box
+                        }
+                        richTextBox1.AppendText("------------------------Interface MyHashSet LinearSearch---------------\n"); // Append text to richTextBox1
+
+                        Stopwatch stopwatch = new Stopwatch(); // Declare stopwatch variable of Stopwatch type
+                        stopwatch.Start(); // Start stopwatch
+
+                        IEnumerable<Book> results = myHash.LinearSearch(selectedSortBy, textBox1.Text); // Declare results variable of IEnumerable<Book> type and assign it to myHash LinearSearch method
+
+                        stopwatch.Stop(); // Stop stopwatch
+
+                        //double elapsedTime = Math.Round(stopwatch.Elapsed.TotalSeconds, 1);
+                        long elapsedTicks = stopwatch.ElapsedTicks; // Declare elapsedTicks variable of long type and assign it to stopwatch elapsed ticks
+                        double ticksPerNanosecond = Stopwatch.Frequency / 1_000_000_000.0; // Declare ticksPerNanosecond variable of double type and assign it to stopwatch frequency divided by 1_000_000_000.0
+                        double elapsedNanoseconds = elapsedTicks / ticksPerNanosecond; // Declare elapsedNanoseconds variable of double type and assign it to elapsedTicks divided by ticksPerNanosecond
+                        richTextBox1.AppendText("The time is" + elapsedNanoseconds + "\n"); // Append text to richTextBox1
+
+                        if (results.Any()) // Check if results has any elements
+                        {
+                            foreach (Book book in results) // Iterate through results
+                            {
+                                richTextBox1.AppendText(book.Title + " by " + book.Author + book.Publisher + book.Genre + book.Year + "\n"); // Append text to richTextBox1
+                            }
+                        }
+                        else
+                        {
+                            richTextBox1.AppendText("Could not find:\n"); // Append text to richTextBox1
+
+                        }
+                    }
+                    else if (BinaryButton.Checked) // Check if BinaryButton is checked
+                    {
+                        if (String.IsNullOrEmpty(textBox1.Text)) // Check if textBox1 is null or empty
+                        {
+                            MessageBox.Show("Please search for something!"); // Show message box
+                        }
+                        richTextBox1.AppendText("------------------------Interface MyHashSet BinarySearch---------------\n"); // Append text to richTextBox1
+
+                        Stopwatch stopwatch = new Stopwatch(); // Declare stopwatch variable of Stopwatch type
+                        stopwatch.Start(); // Start stopwatch
+
+                        IEnumerable<Book> binarBook = myHash.BinarySearch(selectedSortBy, textBox1.Text); // Declare binarBook variable of IEnumerable<Book> type and assign it to myHash BinarySearch method
+
+                        stopwatch.Stop(); // Stop stopwatch
+
+                        //double elapsedTime = Math.Round(stopwatch.Elapsed.TotalSeconds, 1);
+                        long elapsedTicks = stopwatch.ElapsedTicks; // Declare elapsedTicks variable of long type and assign it to stopwatch elapsed ticks
+                        double ticksPerNanosecond = Stopwatch.Frequency / 1_000_000_000.0; // Declare ticksPerNanosecond variable of double type and assign it to stopwatch frequency divided by 1_000_000_000.0
+                        double elapsedNanoseconds = elapsedTicks / ticksPerNanosecond; // Declare elapsedNanoseconds variable of double type and assign it to elapsedTicks divided by ticksPerNanosecond
+                        richTextBox1.AppendText("The time is" + elapsedNanoseconds + "\n"); // Append text to richTextBox1
+
+                        if (binarBook.Any()) // Check if binarBook has any elements
+                        {
+                            foreach (Book book in binarBook) // Iterate through binarBook
+                            {
+                                richTextBox1.AppendText(book.Title + " by " + book.Author + book.Publisher + book.Genre + book.Year + "\n"); // Append text to richTextBox1
+                            }
+                        }
+                        else
+                        {
+                            richTextBox1.AppendText("Could not find:\n"); // Append text to richTextBox1
+
+                        }
+                    }
+                }
+                else if (LinkedListRadio.Checked) // Check if LinkedListRadio is cheked
+                {
+                    MyLinkedList<Book> linkedList = new MyLinkedList<Book>();
+
+                    if (checkBox1.Checked)  // Check if checkBox1 is checked
+                    {
+                        linkedList = getHalfList();  // Assign linkedList to getHalfList method
+                    }
+                    linkedList = getBooksList(); // Assign linkedList to getBooksList method
+
+                    MyLinkedList<Book> myLinked = CreateBooksLinked(linkedList); // Declare myLinked variable of MyLinkedList<Book> type and assign it to CreateBooksLinked method
+
+                    if (BubbleRadio.Checked) // Check if BubbleRadio is checked
+                    {
+                        Stopwatch stopwatch = new Stopwatch(); // Declare stopwatch variable of Stopwatch type
+                        stopwatch.Start(); // Start stopwatch
+
+                        myLinked.BubbleSort(selectedSortBy); // Call BubbleSort method
+
+                        stopwatch.Stop();   // Stop stopwatch
+
+                        // double elapsedTime = Math.Round(stopwatch.Elapsed.TotalSeconds, 1);
+                        long elapsedTicks = stopwatch.ElapsedTicks; // Declare elapsedTicks variable of long type and assign it to stopwatch elapsed ticks
+                        double ticksPerNanosecond = Stopwatch.Frequency / 1_000_000_000.0; // Declare ticksPerNanosecond variable of double type and assign it to stopwatch frequency divided by 1_000_000_000.0
+                        double elapsedNanoseconds = elapsedTicks / ticksPerNanosecond; // Declare elapsedNanoseconds variable of double type and assign it to elapsedTicks divided by ticksPerNanosecond
+                        richTextBox1.AppendText("The time is" + elapsedNanoseconds + "\n"); // Append text to richTextBox1
+
+                        richTextBox1.AppendText("------------------------Interface BubbleSort MyLinkedList---------------\n"); // Append text to richTextBox1
+                        foreach (Book book in myLinked) // Iterate through myLinked
+                        {
+
+                            richTextBox1.AppendText($"- {book.Title} by {book.Author} + {book.Publisher} + {book.Genre} + {book.Year}\n"); // Append text to richTextBox1
+                        }
+                    }
+                    else if (InsertionRadio.Checked) // Check if InsertionRadio is checked
+                    {
+
+                        Stopwatch stopwatch = new Stopwatch(); // Declare stopwatch variable of Stopwatch type
+                        stopwatch.Start(); // Start stopwatch
+
+                        myLinked.InsertionSort(selectedSortBy); // Call InsertionSort method
+
+                        stopwatch.Stop(); // Stop stopwatch
+                        double elapsedTime = Math.Round(stopwatch.Elapsed.TotalSeconds, 1); // Declare elapsedTime variable of double type and assign it to stopwatch elapsed total seconds rounded to 1 decimal place
+                        richTextBox1.AppendText("The time is" + elapsedTime + "\n"); // Append text to richTextBox1
+
+                        richTextBox1.Clear();   // Clear richTextBox1
+                        richTextBox1.AppendText("------------------------Interface Insertion MyDictionary---------------\n"); // Append text to richTextBox1
+                        foreach (Book book in myLinked) // Iterate through myLinked
+                        {
+
+                            richTextBox1.AppendText($"- {book.Title} by {book.Author} + {book.Publisher} + {book.Genre} + {book.Year}\n"); // Append text to richTextBox1
+                        }
+                    }
+                    else if (LinearButton.Checked) // Check if LinearButton is checked
+                    {
+                        if (String.IsNullOrEmpty(textBox1.Text)) // Check if textBox1 is null or empty
+                        {
+                            MessageBox.Show("Please search for something!"); // Show message box
+                        }
+                        richTextBox1.AppendText("------------------------Interface MyLinkedList LinearSearch---------------\n"); // Append text to richTextBox1
+
+                        Stopwatch stopwatch = new Stopwatch(); // Declare stopwatch variable of Stopwatch type
+                        stopwatch.Start(); // Start stopwatch
+
+                        IEnumerable<Book> results = myLinked.LinearSearch(selectedSortBy, textBox1.Text); // Declare results variable of IEnumerable<Book> type and assign it to myLinked LinearSearch method
+
+                        stopwatch.Stop(); // Stop stopwatch
+
+                        // double elapsedTime = Math.Round(stopwatch.Elapsed.TotalSeconds, 1);
+                        long elapsedTicks = stopwatch.ElapsedTicks; // Declare elapsedTicks variable of long type and assign it to stopwatch elapsed ticks
+                        double ticksPerNanosecond = Stopwatch.Frequency / 1_000_000_000.0; // Declare ticksPerNanosecond variable of double type and assign it to stopwatch frequency divided by 1_000_000_000.0
+                        double elapsedNanoseconds = elapsedTicks / ticksPerNanosecond; // Declare elapsedNanoseconds variable of double type and assign it to elapsedTicks divided by ticksPerNanosecond
+                        richTextBox1.AppendText("The time is" + elapsedNanoseconds + "\n"); // Append text to richTextBox1
+
+                        if (results.Any()) // Check if results has any elements
+                        {
+                            foreach (Book book in results) // Iterate through resultds
+                            {
+                                richTextBox1.AppendText(book.Title + " by " + book.Author + book.Publisher + book.Genre + book.Year + "\n"); // Append text to richTextBox1
+                            }
+                        }
+                        else
+                        {
+                            richTextBox1.AppendText("Could not find:\n"); // Append text to richTextBox1
+
+                        }
+                    }
+                    else if (BinaryButton.Checked) // Check if BinaryButton is checked
+                    {
+                        if (String.IsNullOrEmpty(textBox1.Text)) // Check if textBox1 is null or empty
+                        {
+                            MessageBox.Show("Please search for something!"); // Show message box
+                        }
+                        richTextBox1.AppendText("------------------------Interface MyLinkedList BinarySearch---------------\n"); // Append text to richTextBox1
+
+                        Stopwatch stopwatch = new Stopwatch(); // Declare stopwatch variable of Stopwatch type
+                        stopwatch.Start(); // Start stopwatch
+
+                        IEnumerable<Book> binaryLinked = myLinked.LinearSearch(selectedSortBy, textBox1.Text); // Declare binaryLinked variable of IEnumerable<Book> type and assign it to myLinked LinearSearch method
+
+                        stopwatch.Stop(); // Stop stopwatch
+
+                        // double elapsedTime = Math.Round(stopwatch.Elapsed.TotalSeconds, 1);
+                        long elapsedTicks = stopwatch.ElapsedTicks; // Declare elapsedTicks variable of long type and assign it to stopwatch elapsed ticks
+                        double ticksPerNanosecond = Stopwatch.Frequency / 1_000_000_000.0; // Declare ticksPerNanosecond variable of double type and assign it to stopwatch frequency divided by 1_000_000_000.0
+                        double elapsedNanoseconds = elapsedTicks / ticksPerNanosecond; // Declare elapsedNanoseconds variable of double type and assign it to elapsedTicks divided by ticksPerNanosecond
+                        richTextBox1.AppendText("The time is" + elapsedNanoseconds + "\n"); // Append text to richTextBox1
+
+                        if (binaryLinked.Any()) // Check if binaryLinked has any elements
+                        {
+                            foreach (Book book in binaryLinked)  // Iterate through binaryLinked
+                            {
+                                richTextBox1.AppendText(book.Title + " by " + book.Author + book.Publisher + book.Genre + book.Year + "\n"); // Append text to richTextBox1
+                            }
+                        }
+                        else
+                        {
+                            richTextBox1.AppendText("Could not find:\n"); // Append text to richTextBox1
+
+                        }
+                    }
+                }
+            }
+            else
+            {
+                richTextBox1.AppendText("Please add a sortBy"); // Append text to richTextBox1
+            }
+
+        }
     }
 }
+    
+
