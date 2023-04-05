@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Data_Structure_Assigment_Y2
+public enum SortBy
 {
-    internal class SortBy
-    {
-    }
+    Title,
+    Author,
+    Year,
+    Genre,
+    Publisher
 }
