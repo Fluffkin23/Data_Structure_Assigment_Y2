@@ -26,6 +26,8 @@ namespace Data_Structure_Assigment_Y2
         {
             InitializeComponent(); // Initialize Form 1 components
             comboBox1.SelectedIndex = -1; // Set selected index of comboBox1 to -1
+            FillComboBoxWithEnumValues(); // Call FillComboBoxWithEnumValues method
+
         }
 
         public MyLinkedList<Book> getBooksList() // Declare public method to get booksList
