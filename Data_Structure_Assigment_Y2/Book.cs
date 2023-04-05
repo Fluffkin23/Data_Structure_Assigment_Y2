@@ -4,12 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-// This is a class that represents a book
-public class Book
+namespace Data_Structure_Assigment_Y2
 {
-    public string Title { get; set; }
-    public string Author { get; set; }
-    public int Year { get; set; }
-    public string Genre { get; set; }
-    public string Publisher { get; set; }
+    internal class Book
+    {
+    }
 }
