@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Data_Structure_Assigment_Y2
+// This is an interface that represents a linear searchable object
+public interface ILinearSearchable<T>
 {
-    internal class ILinearSearchable
-    {
-    }
+    IEnumerable<T> LinearSearch(SortBy sortBy, string searchTerm);
+    List<T> BinarySearch(SortBy sortBy, string searchTerm);
+
 }
