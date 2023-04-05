@@ -58,6 +58,7 @@
     </Compile>
     <Compile Include="ILinearSearchable.cs" />
     <Compile Include="ISortable.cs" />
+    <Compile Include="MyDictionary.cs" />
     <Compile Include="MyHashSet.cs" />
     <Compile Include="MyLinkedList.cs" />
     <Compile Include="MyLinkedListConvertor.cs" />
